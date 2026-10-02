@@ -1,15 +1,15 @@
-{{ config(materialized='view') }}
+{{
+    config(
+        materialized='view'
+    )
+}}
 
-with source as (
-
-    select *
-    from {{ source('ods', 'raw_payments') }}
-
-)
-
-select
-    id as payment_id,
+SELECT
+    row_id,
     order_id,
-    payment_method,
-    cast(amount as decimal(10, 2)) / 100.0 as amount_usd
-from source
+    sales,
+    quantity,
+    discount,
+    profit
+FROM {{ source('my_ods', 'ods_superstore') }}
+WHERE order_id IS NOT NULL

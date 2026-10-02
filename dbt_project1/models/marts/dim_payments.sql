@@ -1,8 +1,14 @@
-{{ config(materialized='table') }}
+{{
+    config(
+        materialized='table'
+    )
+}}
 
-select
-    payment_id,
+SELECT
+    row_id,
     order_id,
-    payment_method,
-    amount_usd
-from {{ ref('stg_payments') }}
+    sales,
+    quantity,
+    discount,
+    profit
+FROM {{ ref('stg_payments') }}

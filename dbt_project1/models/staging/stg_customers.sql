@@ -1,14 +1,12 @@
-{{ config(materialized='view') }}
+{{
+    config(
+        materialized='view'
+    )
+}}
 
-with source as (
-
-    select *
-    from {{ source('ods', 'raw_customers') }}
-
-)
-
-select
-    id as customer_id,
-    first_name,
-    last_name
-from source
+SELECT DISTINCT
+    customer_id,
+    customer_name,
+    segment
+FROM {{ source('my_ods', 'ods_superstore') }}
+WHERE customer_id IS NOT NULL
