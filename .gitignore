@@ -1,0 +1,22 @@
+# Python & Environments
+venv/
+__pycache__/
+.env
+
+# dbt folders
+target/
+dbt_packages/
+logs/
+
+# Databases
+*.duckdb
+*.duckdb.wal
+
+# Data files
+data/
+*.csv
+*.xlsx
+
+# IDE & OS
+.vscode/
+.DS_Store
