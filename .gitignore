@@ -37,3 +37,5 @@ dags/__pycache__/
 .idea/
 .DS_Store
 Thumbs.db
+
+dbt_project1/profiles.yml
