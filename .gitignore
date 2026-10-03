@@ -1,22 +1,39 @@
-# Python & Environments
+# Python & Virtual Environments
 venv/
+.venv/
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
 .env
 
-# dbt folders
+# dbt Artifacts & Logs
+dbt_project1/target/
+dbt_project1/dbt_packages/
+dbt_project1/logs/
 target/
 dbt_packages/
 logs/
 
-# Databases
+# Databases & Storage
 *.duckdb
 *.duckdb.wal
+*.db
+*.sqlite
 
-# Data files
-data/
+# Data Files
+data/*.csv
+data/*.xlsx
 *.csv
 *.xlsx
 
-# IDE & OS
+# Airflow Logs & Docker Containers
+airflow_logs/
+plugins/
+dags/__pycache__/
+
+# IDE & OS Specific
 .vscode/
+.idea/
 .DS_Store
+Thumbs.db

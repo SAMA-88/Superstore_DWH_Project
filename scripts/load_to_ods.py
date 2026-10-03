@@ -1,35 +1,62 @@
-from pathlib import Path
 import duckdb
+import pandas as pd
+import os
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+# 1. Configure paths dynamically so the script works on any machine
+# Get the project's root directory (one level up from the scripts folder)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DB_PATH = PROJECT_ROOT /"dev.duckdb"
-RAW_PATH = PROJECT_ROOT / "data" / "raw"
+# Define the data file and DuckDB database paths
+DATA_FILE = os.path.join(BASE_DIR, 'data', 'Superstore.xlsx')
+DB_FILE = os.path.join(BASE_DIR, 'dbt_project1', 'dev.duckdb')
 
-tables = {
-    "raw_customers": RAW_PATH / "raw_customers.csv",
-    "raw_orders": RAW_PATH / "raw_orders.csv",
-    "raw_payments": RAW_PATH / "raw_payments.csv",
-}
 
-con = duckdb.connect(str(DB_PATH))
+def main():
+    print("Starting the data extraction process...")
 
-con.execute("CREATE SCHEMA IF NOT EXISTS ods")
+    # 2. Read the data
+    print(f"📂 Reading the file from: {DATA_FILE}")
 
-for table_name, csv_path in tables.items():
+    try:
+        df = pd.read_excel(DATA_FILE)
+    except FileNotFoundError:
+        print("❌ Error: Superstore.xlsx was not found in the data folder!")
+        return
 
-    con.execute(f"""
-        CREATE OR REPLACE TABLE ods.{table_name} AS
-        SELECT *
-        FROM read_csv_auto('{csv_path}', header=True)
-    """)
+    # Clean column names:
+    # Remove spaces and hyphens and convert names to lowercase
+    # to make them easier to use later with dbt.
+    df.columns = (
+        df.columns
+        .str.replace(' ', '_')
+        .str.replace('-', '_')
+        .str.lower()
+    )
 
-    count = con.execute(
-        f"SELECT COUNT(*) FROM ods.{table_name}"
-    ).fetchone()[0]
+    print("Creating the database and loading the data...")
 
-    print(f"Loaded ods.{table_name}: {count} rows")
+    # 3. Connect to DuckDB and create the table
+    # DuckDB is very fast and can query a Pandas DataFrame
+    # directly as if it were a SQL table.
+    conn = duckdb.connect(DB_FILE)
 
-con.close()
+    # Create or replace the ODS table with the data from the DataFrame
+    conn.execute(
+        "CREATE OR REPLACE TABLE ods_superstore AS SELECT * FROM df"
+    )
 
-print("ODS load complete")
+    # Verify the number of rows loaded
+    result = conn.execute(
+        "SELECT COUNT(*) FROM ods_superstore"
+    ).fetchone()
+
+    print(
+        f"✅ Process completed successfully! "
+        f"{result[0]} rows were loaded into the 'ods_superstore' table."
+    )
+
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()

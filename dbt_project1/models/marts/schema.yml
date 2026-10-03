@@ -4,7 +4,6 @@ models:
 
   - name: dim_customers
     columns:
-
       - name: customer_id
         tests:
           - unique
@@ -12,12 +11,15 @@ models:
 
   - name: fct_orders
     columns:
-
-      - name: order_id
+      - name: row_id
         tests:
-          - unique
           - not_null
+          - unique
 
       - name: customer_id
+        tests:
+          - not_null
+
+      - name: order_id
         tests:
           - not_null
