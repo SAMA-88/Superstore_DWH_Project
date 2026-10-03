@@ -227,7 +227,8 @@ Pipeline Success / Failure
 
 
 Airflow controls the execution order and ensures that downstream tasks depend on the successful completion of upstream tasks.
-![alt text](<Screenshot 2026-10-03 221340.png>)
+![Click here
+](<Screenshot 2026-10-03 221340.png>)
 
 ---
 
